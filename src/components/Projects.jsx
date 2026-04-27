@@ -1,8 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { FiGitBranch, FiSearch, FiStar } from 'react-icons/fi'
 import { useGitHubRepos } from '../hooks/useGitHubRepos.js'
-import ProjectModal from './ProjectModal.jsx'
 
 function SkeletonCard() {
   return <div className="h-44 animate-pulse rounded-2xl border border-slate-700 bg-slate-800/60" />
@@ -10,16 +9,16 @@ function SkeletonCard() {
 
 export default function Projects() {
   const { repos, loading, error, searchTerm, setSearchTerm } = useGitHubRepos()
-  const [activeRepo, setActiveRepo] = useState(null)
 
   const cards = useMemo(
     () =>
       repos.map((repo) => (
-        <motion.button
+        <motion.a
           className="group rounded-2xl border border-slate-700 bg-slate-900/70 p-5 text-left transition hover:border-cyan-400/60 hover:bg-slate-900"
+          href={repo.html_url}
           key={repo.id}
-          onClick={() => setActiveRepo(repo)}
-          type="button"
+          rel="noreferrer"
+          target="_blank"
           whileHover={{ y: -4 }}
         >
           <div className="flex items-center justify-between gap-3">
@@ -42,7 +41,7 @@ export default function Projects() {
             </span>
             <span>Updated {new Date(repo.updated_at).toLocaleDateString()}</span>
           </div>
-        </motion.button>
+        </motion.a>
       )),
     [repos],
   )
@@ -69,7 +68,6 @@ export default function Projects() {
           {loading ? Array.from({ length: 6 }).map((_, index) => <SkeletonCard key={index} />) : cards}
         </div>
       </div>
-      <ProjectModal onClose={() => setActiveRepo(null)} repo={activeRepo} />
     </section>
   )
 }
